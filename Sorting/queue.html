@@ -50,20 +50,30 @@
             letter-spacing: -0.5px;
         }
 
-        .home-btn {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+        
+        #mainlink {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
         }
 
-        .home-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+        #mainlink a {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #mainlink a:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
 
@@ -525,15 +535,18 @@
         }
 
         .maximize-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 110px;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border: none;
             border-radius: 12px;
-            padding: 12px 20px;
+            padding: 11px 20px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -553,6 +566,7 @@
         .maximized .main-content {
             grid-template-columns: 1fr;
         }
+
     </style>
 </head>
 <body>
@@ -560,9 +574,10 @@
         <div class="container">
             <div class="header-content">
                 <h1 class="logo">🔄 QUEUE VISUALIZER</h1>
-                <button class="home-btn" onclick="window.location.href='../../index.html'">
-                    🏠 Home
-                </button>
+            </div>
+            <button class="maximize-btn" id="maximize-btn">🔍 Maximize</button>
+            <div id="mainlink">
+                <a href="../index.html">← Home</a>
             </div>
         </div>
     </div>
@@ -683,8 +698,6 @@
             </div>
         </div>
     </div>
-
-    <button class="maximize-btn" id="maximize-btn">🔍 Maximize</button>
 
     <script>
         const arrayContainer = document.querySelector("#array-container");

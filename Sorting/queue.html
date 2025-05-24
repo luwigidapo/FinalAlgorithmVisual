@@ -2,947 +2,707 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue Visualizer (Array Implementation)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Queue Visualizer</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header Styles */
-        .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
         
-        #mainlink {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 10;
-        }
-
-        #mainlink a {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.2);
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
             color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 30px;
+            position: relative;
         }
-
-        #mainlink a:hover {
-            background: rgba(255, 255, 255, 0.3);
+        
+        .nav-buttons {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
         }
-
-        /* Control Panel */
+        
         .control-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            margin: 30px 0;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-
-        .panel-title {
-            text-align: center;
-            color: #4c51bf;
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-
-        .controls-grid {
+        
+        .controls {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            align-items: end;
         }
-
-        .control-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .section-label {
-            font-weight: 600;
-            color: #4c51bf;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
+        
         .input-group {
             display: flex;
             gap: 10px;
-            align-items: center;
+            flex-wrap: wrap;
         }
-
+        
         .queue-input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 12px;
             border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
         }
-
+        
         .queue-input:focus {
             outline: none;
             border-color: #4fd1c7;
-            box-shadow: 0 0 0 3px rgba(79, 209, 199, 0.2);
         }
-
+        
         .btn {
-            padding: 12px 24px;
+            padding: 12px 18px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+        
+        .btn-primary { background: #4fd1c7; color: white; }
+        .btn-danger { background: #e53e3e; color: white; }
+        .btn-warning { background: #ed8936; color: white; }
+        .btn-secondary { background: #8b5cf6; color: white; }
+        
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        
+        .random-buttons {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 8px;
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
-            color: white;
+        
+        .random-buttons .btn {
+            padding: 8px 12px;
+            font-size: 12px;
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 209, 199, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(229, 62, 62, 0.4);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #fbb6ce 0%, #ed64a6 100%);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(237, 100, 166, 0.4);
-        }
-
+        
         .speed-control {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            font-size: 12px;
         }
-
+        
         .speed-slider {
             flex: 1;
-            height: 6px;
+            height: 4px;
             background: #e2e8f0;
-            border-radius: 3px;
+            border-radius: 2px;
             outline: none;
             -webkit-appearance: none;
         }
-
+        
         .speed-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
+            width: 16px;
+            height: 16px;
+            background: #4fd1c7;
             border-radius: 50%;
             cursor: pointer;
         }
-
-        .status-panel {
+        
+        .status {
             text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(79, 209, 199, 0.1) 0%, rgba(56, 178, 172, 0.1) 100%);
-            border-radius: 12px;
-            border: 1px solid rgba(79, 209, 199, 0.3);
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #4a5568;
+            font-weight: 500;
         }
-
-        .queue-size {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #4c51bf;
-            margin-bottom: 10px;
+        
+        .visualization {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+            text-align: center;
         }
-
-        .queue-status {
-            font-size: 1rem;
-            color: #718096;
-        }
-
-        /* Main Content Layout */
-        .main-content {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .info-sidebar {
+        
+        .queue-container {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 20px;
         }
-
-        .info-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .card-title {
-            color: #4c51bf;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-content {
-            color: #4a5568;
-            line-height: 1.6;
-        }
-
-        .card-content p {
-            margin-bottom: 12px;
-        }
-
-        .card-content ol {
-            padding-left: 20px;
-        }
-
-        .card-content li {
-            margin-bottom: 8px;
-        }
-
-        .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 20px;
+        
+        .array-section {
+            background: #f8f9fa;
+            padding: 25px;
             border-radius: 12px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            overflow-x: auto;
-            margin-top: 12px;
+            border: 2px solid #e2e8f0;
         }
-
-        /* Visualization Area */
-        .visualization-area {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            min-height: 600px;
+        
+        .indices, .boxes {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 4px;
             justify-content: center;
         }
-
-        .queue-visualization {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-            width: 100%;
-        }
-
-        .array-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background: rgba(79, 209, 199, 0.05);
-            padding: 30px;
-            border-radius: 16px;
-            border: 2px solid rgba(79, 209, 199, 0.2);
-        }
-
-        .array-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .array-index {
-            width: 40px;
-            height: 60px;
+        
+        .indices { margin-bottom: 8px; }
+        
+        .index {
+            width: 50px;
+            height: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 12px;
             font-weight: 600;
-            color: #4c51bf;
-            font-size: 14px;
-            background: rgba(76, 81, 191, 0.1);
+            color: #666;
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
-        }
-
-        .array-box {
-            width: 80px;
-            height: 60px;
-            border: 3px solid #e2e8f0;
-            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 14px;
             background: white;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transition: all 0.5s ease;
         }
-
-        .array-box.filled {
-            background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
+        
+        .box.filled {
+            background: #4fd1c7;
             color: white;
             border-color: #38b2ac;
-            box-shadow: 0 8px 25px rgba(79, 209, 199, 0.3);
         }
-
-        .array-box.head-position {
-            border-color: #48bb78;
-            border-width: 4px;
-            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.3);
-        }
-
-        .array-box.tail-position {
-            border-color: #ed8936;
-            border-width: 4px;
-            box-shadow: 0 0 0 3px rgba(237, 137, 54, 0.3);
-        }
-
-        .pointers-container {
+        
+        .box.head { border-color: #48bb78; border-width: 3px; }
+        .box.tail { border-color: #ed8936; border-width: 3px; }
+        
+        .pointers {
             display: flex;
-            gap: 40px;
-            align-items: center;
+            gap: 30px;
+            justify-content: center;
         }
-
-        .pointer-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            padding: 20px;
+        
+        .pointer {
+            padding: 15px 20px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
             border: 2px solid #e2e8f0;
-            min-width: 120px;
+            text-align: center;
+            min-width: 100px;
         }
-
-        .pointer-box.head {
-            border-color: #48bb78;
-            background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(72, 187, 120, 0.05) 100%);
-        }
-
-        .pointer-box.tail {
-            border-color: #ed8936;
-            background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(237, 137, 54, 0.05) 100%);
-        }
-
+        
+        .pointer.head { border-color: #48bb78; background: #f0fff4; }
+        .pointer.tail { border-color: #ed8936; background: #fffaf0; }
+        
         .pointer-label {
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 5px;
         }
-
-        .pointer-box.head .pointer-label {
-            color: #48bb78;
-        }
-
-        .pointer-box.tail .pointer-label {
-            color: #ed8936;
-        }
-
+        
+        .pointer.head .pointer-label { color: #48bb78; }
+        .pointer.tail .pointer-label { color: #ed8936; }
+        
         .pointer-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: #2d3748;
         }
-
-        .status-display {
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #4a5568;
-            padding: 20px;
-            background: rgba(79, 209, 199, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(79, 209, 199, 0.3);
-            margin-top: 20px;
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
-
-        /* Animations */
-        .animate-enqueue {
-            animation: enqueueAnimation 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .animate-dequeue {
-            animation: dequeueAnimation 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes enqueueAnimation {
-            0% {
-                transform: scale(1) rotateY(0deg);
-                background: white;
-            }
-            50% {
-                transform: scale(1.15) rotateY(180deg);
-                background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
-                box-shadow: 0 12px 35px rgba(79, 209, 199, 0.5);
-            }
-            100% {
-                transform: scale(1) rotateY(360deg);
-                background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
-            }
-        }
-
-        @keyframes dequeueAnimation {
-            0% {
-                transform: scale(1);
-                background: linear-gradient(135deg, #4fd1c7 0%, #38b2ac 100%);
-            }
-            50% {
-                transform: scale(1.15) rotateX(180deg);
-                background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
-                box-shadow: 0 12px 35px rgba(229, 62, 62, 0.5);
-            }
-            100% {
-                transform: scale(1) rotateX(360deg);
-                background: white;
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            .controls-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .array-container {
-                padding: 20px;
-            }
-
-            .array-box {
-                width: 60px;
-                height: 50px;
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .control-panel {
-                padding: 20px;
-            }
-
-            .visualization-area {
-                padding: 20px;
-            }
-
-            .pointers-container {
-                flex-wrap: wrap;
-                gap: 20px;
-            }
-
-            .array-row {
-                gap: 10px;
-            }
-
-            .array-box {
-                width: 50px;
-                height: 45px;
-                font-size: 12px;
-            }
-
-            .array-index {
-                width: 30px;
-                height: 45px;
-                font-size: 12px;
-            }
-        }
-
-        .maximize-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 10;
-            display: inline-flex;
-            align-items: center;
-            margin-right: 110px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: none;
-            border-radius: 12px;
-            padding: 11px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #4c51bf;
-        }
-
-        .maximize-btn:hover {
+        
+        .info-card {
             background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .maximized .info-sidebar {
+        
+        .card-title {
+            color: #4c51bf;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .card-content {
+            color: #4a5568;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        .animate-enqueue {
+            animation: enqueue 0.6s ease;
+        }
+        
+        .animate-dequeue {
+            animation: dequeue 0.6s ease;
+        }
+        
+        @keyframes enqueue {
+            0% { transform: scale(1); background: white; }
+            50% { transform: scale(1.2); background: #4fd1c7; }
+            100% { transform: scale(1); background: #4fd1c7; }
+        }
+        
+        @keyframes dequeue {
+            0% { transform: scale(1); background: #4fd1c7; }
+            50% { transform: scale(1.2); background: #e53e3e; }
+            100% { transform: scale(1); background: white; }
+        }
+        
+        #complexity-modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
-
-        .maximized .main-content {
-            grid-template-columns: 1fr;
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-
+        
+        .modal-content h2 {
+            color: #4c51bf;
+            margin-bottom: 20px;
+        }
+        
+        .modal-content h3 {
+            color: #4c51bf;
+            margin-top: 15px;
+        }
+        
+        .modal-content ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        
+        .modal-content button {
+            padding: 10px 20px;
+            background: #4fd1c7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .modal-content button:hover {
+            background: #38b2ac;
+        }
+        
+        @media (max-width: 768px) {
+            .controls { grid-template-columns: 1fr; gap: 15px; }
+            .pointers { flex-wrap: wrap; gap: 15px; }
+            .box, .index { width: 45px; height: 45px; font-size: 12px; }
+            .index { height: 20px; }
+            .nav-buttons {
+                position: relative;
+                justify-content: center;
+                margin-top: 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1 class="logo">🔄 QUEUE VISUALIZER</h1>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Queue Visualizer (Array Implementation)</h1>
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-btn">← Home</a>
+                <button class="nav-btn" id="complexity-btn">ℹ️ Complexity Info</button>
             </div>
-            <button class="maximize-btn" id="maximize-btn">🔍 Maximize</button>
-            <div id="mainlink">
-                <a href="../index.html">← Home</a>
+        </div>
+        
+        <div class="control-panel">
+            <div class="controls">
+                <div>
+                    <div class="input-group">
+                        <input type="text" class="queue-input" id="input" placeholder="Enter numbers (comma or space separated)">
+                        <button class="btn btn-primary" id="enqueue">➕ Enqueue</button>
+                        <button class="btn btn-danger" id="dequeue">➖ Dequeue</button>
+                        <button class="btn btn-warning" id="clear">🗑️ Clear</button>
+                    </div>
+                </div>
+                
+                <div class="random-buttons">
+                    <button class="btn btn-secondary" id="random-3">🎲 Add 3-5 Random</button>
+                    <button class="btn btn-secondary" id="random-6">🎲 Add 6-8 Random</button>
+                    <button class="btn btn-secondary" id="random-9">🎲 Add 9-12 Random</button>
+                </div>
+                
+                <div class="speed-control">
+                    <span>Slow</span>
+                    <input type="range" class="speed-slider" id="speed" min="1" max="10" value="5">
+                    <span>Fast</span>
+                </div>
+            </div>
+            
+            <div class="status" id="status">Queue is empty - Ready for elements!</div>
+        </div>
+        
+        <div class="visualization">
+            <div class="queue-container">
+                <div class="array-section">
+                    <div class="indices" id="indices"></div>
+                    <div class="boxes" id="boxes"></div>
+                </div>
+                
+                <div class="pointers">
+                    <div class="pointer head">
+                        <div class="pointer-label">Head</div>
+                        <div class="pointer-value" id="head-val">0</div>
+                    </div>
+                    <div class="pointer tail">
+                        <div class="pointer-label">Tail</div>
+                        <div class="pointer-value" id="tail-val">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="card-title">📚 What is a Queue?</div>
+                <div class="card-content">
+                    A Queue follows FIFO (First In, First Out) principle. Elements are added at the tail and removed from the head.
+                    <br><br><strong>Operations:</strong>
+                    <br>• Enqueue: Add element at tail
+                    <br>• Dequeue: Remove element from head
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="card-title">⚡ Complexity</div>
+                <div class="card-content">
+                    <strong>Time Complexity:</strong>
+                    <br>• Enqueue: O(1) - Constant time
+                    <br>• Dequeue: O(1) - Constant time
+                    <br><br><strong>Space Complexity:</strong> O(n) - Linear space
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="card-title">🎯 How to Use</div>
+                <div class="card-content">
+                    1. Enter numbers separated by commas or spaces
+                    <br>2. Click Enqueue to add elements
+                    <br>3. Click Dequeue to remove elements
+                    <br>4. Use random buttons for quick testing
+                    <br>5. Adjust speed slider for animation speed
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="control-panel">
-            <h2 class="panel-title">Array-Based Queue Operations</h2>
+    <!-- Complexity Info Modal -->
+    <div id="complexity-modal">
+        <div class="modal-content">
+            <h2>Queue Complexity Information</h2>
             
-            <div class="controls-grid">
-                <div class="control-section">
-                    <div class="section-label">Queue Operations</div>
-                    <div class="input-group">
-                        <input type="text" class="queue-input" id="queue-input" placeholder="Enter value to enqueue">
-                        <button class="btn btn-primary" id="enqueue-btn">
-                            ➕ Enqueue
-                        </button>
-                    </div>
-                    <div class="input-group">
-                        <button class="btn btn-danger" id="dequeue-btn">
-                            ➖ Dequeue
-                        </button>
-                        <button class="btn btn-warning" id="clear-btn">
-                            🗑️ Clear All
-                        </button>
-                    </div>
-                </div>
-
-                <div class="control-section">
-                    <div class="section-label">Animation Speed</div>
-                    <div class="speed-control">
-                        <span>Slow</span>
-                        <input type="range" class="speed-slider" id="speed-slider" min="1" max="10" value="5">
-                        <span>Fast</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="status-panel">
-                <div class="queue-size">Queue Size: <span id="size_value">0</span> / 14</div>
-                <div class="queue-status" id="status">Queue is empty - Next element will be added at position 0</div>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="info-sidebar">
-                <div class="info-card">
-                    <h3 class="card-title">📚 Queue Definition</h3>
-                    <div class="card-content">
-                        <p><strong>Queue</strong> is a linear data structure that follows the First-In-First-Out (FIFO) principle.</p>
-                        <p><strong>Main Operations:</strong></p>
-                        <ol>
-                            <li><strong>Enqueue:</strong> Adds an item at the tail position</li>
-                            <li><strong>Dequeue:</strong> Removes an item from the head position</li>
-                        </ol>
-                        <p>Array implementation provides O(1) operations but has fixed size limitation.</p>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <h3 class="card-title">💻 Implementation</h3>
-                    <div class="card-content">
-                        <p>Array-based queue uses head and tail pointers with circular wrapping.</p>
-                        <div class="code-block">class ArrayQueue {
-    private int[] queue;
-    private int head, tail, size;
-    
-    public void enqueue(int data) {
-        queue[tail] = data;
-        tail = (tail + 1) % capacity;
-        size++;
-    }
-    
-    public int dequeue() {
-        int data = queue[head];
-        head = (head + 1) % capacity;
-        size--;
-        return data;
-    }
-}</div>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <h3 class="card-title">⚡ Complexity</h3>
-                    <div class="card-content">
-                        <p><strong>Time Complexity:</strong></p>
-                        <ul style="list-style: none; padding-left: 0;">
-                            <li>• Enqueue: O(1)</li>
-                            <li>• Dequeue: O(1)</li>
-                            <li>• Peek: O(1)</li>
-                        </ul>
-                        <p><strong>Space Complexity:</strong> O(n)</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="visualization-area">
-                <div class="queue-visualization">
-                    <div class="array-container" id="array-container">
-                        <!-- Array boxes will be generated here -->
-                    </div>
-
-                    <div class="pointers-container">
-                        <div class="pointer-box head">
-                            <div class="pointer-label">Head</div>
-                            <div class="pointer-value" id="head-value">0</div>
-                        </div>
-                        <div class="pointer-box tail">
-                            <div class="pointer-label">Tail</div>
-                            <div class="pointer-value" id="tail-value">0</div>
-                        </div>
-                    </div>
-
-                    <div class="status-display" id="status-display">
-                        Queue is empty - Ready for your first element!
-                    </div>
-                </div>
-            </div>
+            <h3>Array Implementation</h3>
+            <p><strong>Time Complexity:</strong></p>
+            <ul>
+                <li><strong>Enqueue:</strong> O(1) - Constant time (adding at tail)</li>
+                <li><strong>Dequeue:</strong> O(1) - Constant time (removing from head)</li>
+                <li><strong>Peek:</strong> O(1) - Constant time (accessing head element)</li>
+            </ul>
+            
+            <p><strong>Space Complexity:</strong> O(n) - Linear space (where n is the capacity)</p>
+            
+            <h3>Key Points</h3>
+            <ul>
+                <li>Array-based queues use circular buffering to maintain O(1) operations</li>
+                <li>The head and tail pointers wrap around using modulo arithmetic</li>
+                <li>Fixed capacity means no dynamic resizing (unlike linked list implementation)</li>
+            </ul>
+            
+            <button id="close-modal">Close</button>
         </div>
     </div>
 
     <script>
-        const arrayContainer = document.querySelector("#array-container");
-        const sizeValue = document.querySelector("#size_value");
-        const queueInput = document.querySelector("#queue-input");
-        const enqueueBtn = document.querySelector("#enqueue-btn");
-        const dequeueBtn = document.querySelector("#dequeue-btn");
-        const clearBtn = document.querySelector("#clear-btn");
-        const maximizeBtn = document.querySelector("#maximize-btn");
-        const statusDisplay = document.querySelector("#status");
-        const statusDetailDisplay = document.querySelector("#status-display");
-        const speedSlider = document.querySelector("#speed-slider");
-        const headValue = document.querySelector("#head-value");
-        const tailValue = document.querySelector("#tail-value");
-
-        class ArrayQueue {
-            constructor(capacity = 14) {
-                this.capacity = capacity;
-                this.queue = new Array(capacity).fill(null);
+        class Queue {
+            constructor(size = 12) {
+                this.arr = new Array(size).fill(null);
                 this.head = 0;
                 this.tail = 0;
                 this.size = 0;
+                this.capacity = size;
             }
-
-            enqueue(value) {
-                if (this.size === this.capacity) {
-                    throw new Error("Queue is full");
-                }
-                this.queue[this.tail] = value;
+            
+            enqueue(val) {
+                if (this.size >= this.capacity) throw new Error("Queue is full!");
+                this.arr[this.tail] = val;
                 this.tail = (this.tail + 1) % this.capacity;
                 this.size++;
             }
-
+            
             dequeue() {
-                if (this.size === 0) {
-                    throw new Error("Queue is empty");
-                }
-                const value = this.queue[this.head];
-                this.queue[this.head] = null;
+                if (this.size === 0) throw new Error("Queue is empty!");
+                const val = this.arr[this.head];
+                this.arr[this.head] = null;
                 this.head = (this.head + 1) % this.capacity;
                 this.size--;
-                return value;
+                
+                // Reset to start when empty
+                if (this.size === 0) {
+                    this.head = 0;
+                    this.tail = 0;
+                }
+                return val;
             }
-
+            
             clear() {
-                this.queue.fill(null);
+                this.arr.fill(null);
                 this.head = 0;
                 this.tail = 0;
                 this.size = 0;
             }
-
-            isEmpty() {
-                return this.size === 0;
-            }
-
-            isFull() {
-                return this.size === this.capacity;
-            }
-
-            getCurrentTailPosition() {
-                return this.size === 0 ? 0 : this.tail;
-            }
         }
-
-        const queue = new ArrayQueue(14);
-        let animationSpeed = 500;
-        let isAnimating = false;
-
-        function initializeVisualization() {
-            arrayContainer.innerHTML = '';
+        
+        const queue = new Queue(12);
+        let speed = 500;
+        let animating = false;
+        
+        const elements = {
+            input: document.getElementById('input'),
+            enqueue: document.getElementById('enqueue'),
+            dequeue: document.getElementById('dequeue'),
+            clear: document.getElementById('clear'),
+            status: document.getElementById('status'),
+            indices: document.getElementById('indices'),
+            boxes: document.getElementById('boxes'),
+            headVal: document.getElementById('head-val'),
+            tailVal: document.getElementById('tail-val'),
+            speedSlider: document.getElementById('speed'),
+            random3: document.getElementById('random-3'),
+            random6: document.getElementById('random-6'),
+            random9: document.getElementById('random-9'),
+            complexityBtn: document.getElementById('complexity-btn'),
+            complexityModal: document.getElementById('complexity-modal'),
+            closeModal: document.getElementById('close-modal')
+        };
+        
+        function init() {
+            elements.indices.innerHTML = '';
+            elements.boxes.innerHTML = '';
             
-            for (let i = 0; i < 14; i++) {
-                const row = document.createElement('div');
-                row.className = 'array-row';
-                
+            for (let i = 0; i < 12; i++) {
                 const index = document.createElement('div');
-                index.className = 'array-index';
+                index.className = 'index';
                 index.textContent = i;
+                elements.indices.appendChild(index);
                 
                 const box = document.createElement('div');
-                box.className = 'array-box';
+                box.className = 'box';
                 box.id = `box-${i}`;
-                
-                row.appendChild(index);
-                row.appendChild(box);
-                arrayContainer.appendChild(row);
+                elements.boxes.appendChild(box);
             }
-            
-            updateVisualization();
+            update();
         }
-
-        function updateVisualization() {
-            sizeValue.textContent = queue.size;
-            headValue.textContent = queue.isEmpty() ? '0' : queue.head;
-            tailValue.textContent = queue.getCurrentTailPosition();
+        
+        function update() {
+            elements.headVal.textContent = queue.head;
+            elements.tailVal.textContent = queue.tail;
             
-            for (let i = 0; i < 14; i++) {
+            for (let i = 0; i < 12; i++) {
                 const box = document.getElementById(`box-${i}`);
-                box.className = 'array-box';
+                box.className = 'box';
                 box.textContent = '';
                 
-                if (queue.queue[i] !== null) {
+                if (queue.arr[i] !== null) {
                     box.classList.add('filled');
-                    box.textContent = queue.queue[i];
+                    box.textContent = queue.arr[i];
                 }
                 
-                if (!queue.isEmpty() && i === queue.head) {
-                    box.classList.add('head-position');
-                }
-                
-                if (i === queue.getCurrentTailPosition()) {
-                    box.classList.add('tail-position');
-                }
+                if (queue.size > 0 && i === queue.head) box.classList.add('head');
+                if (i === queue.tail) box.classList.add('tail');
             }
             
-            if (queue.isEmpty()) {
-                statusDisplay.textContent = "Queue is empty - Next element will be added at position 0";
-                statusDetailDisplay.textContent = "Queue is empty - Ready for your first element!";
-            } else if (queue.isFull()) {
-                statusDisplay.textContent = "Queue is full";
-                statusDetailDisplay.textContent = "Queue is at maximum capacity!";
+            if (queue.size === 0) {
+                elements.status.textContent = "Queue is empty - Ready for elements!";
+            } else if (queue.size === queue.capacity) {
+                elements.status.textContent = "Queue is full!";
             } else {
-                statusDisplay.textContent = `Queue has ${queue.size} element(s) - Next element will be added at position ${queue.getCurrentTailPosition()}`;
-                statusDetailDisplay.textContent = `Currently storing ${queue.size} elements. Head at position ${queue.head}, Tail at position ${queue.getCurrentTailPosition()}`;
+                elements.status.textContent = `Queue has ${queue.size}/${queue.capacity} elements`;
             }
         }
-
-        async function animateEnqueue(value) {
-            if (isAnimating) return;
-            isAnimating = true;
+        
+        function parseInput(input) {
+            return input.split(/[,\s]+/)
+                       .filter(x => x.trim())
+                       .map(x => {
+                           const num = parseInt(x.trim());
+                           if (isNaN(num)) throw new Error(`"${x}" is not a number`);
+                           return num;
+                       });
+        }
+        
+        async function animateEnqueue(values) {
+            if (animating) return;
+            animating = true;
             
             try {
-                if (queue.isFull()) {
-                    alert("Queue is full! Cannot enqueue more elements.");
-                    return;
+                for (const val of values) {
+                    if (queue.size >= queue.capacity) {
+                        alert("Queue is full!");
+                        break;
+                    }
+                    
+                    const pos = queue.tail;
+                    queue.enqueue(val);
+                    
+                    const box = document.getElementById(`box-${pos}`);
+                    box.classList.add('animate-enqueue');
+                    update();
+                    
+                    await new Promise(r => setTimeout(r, speed));
+                    box.classList.remove('animate-enqueue');
                 }
-                
-                statusDetailDisplay.textContent = `Enqueuing ${value}...`;
-                
-                const tailPosition = queue.getCurrentTailPosition();
-                const box = document.getElementById(`box-${tailPosition}`);
-                
-                box.classList.add('animate-enqueue');
-                queue.enqueue(value);
-                
-                await new Promise(resolve => setTimeout(resolve, animationSpeed));
-                
-                box.classList.remove('animate-enqueue');
-                updateVisualization();
-                
-                statusDetailDisplay.textContent = `Successfully enqueued ${value} at position ${tailPosition}!`;
-                
-            } catch (error) {
-                statusDetailDisplay.textContent = error.message;
-            } finally {
-                isAnimating = false;
+            } catch (e) {
+                alert(e.message);
             }
+            animating = false;
         }
-
+        
         async function animateDequeue() {
-            if (isAnimating) return;
-            isAnimating = true;
+            if (animating || queue.size === 0) {
+                if (queue.size === 0) alert("Queue is empty!");
+                return;
+            }
+            
+            animating = true;
+            const pos = queue.head;
+            const box = document.getElementById(`box-${pos}`);
+            
+            box.classList.add('animate-dequeue');
+            await new Promise(r => setTimeout(r, speed));
+            
+            queue.dequeue();
+            update();
+            box.classList.remove('animate-dequeue');
+            animating = false;
+        }
+        
+        function randomFill(min, max) {
+            const count = Math.floor(Math.random() * (max - min + 1)) + min;
+            const values = Array.from({length: count}, () => Math.floor(Math.random() * 99) + 1);
+            animateEnqueue(values);
+        }
+        
+        // Event listeners
+        elements.enqueue.onclick = () => {
+            const input = elements.input.value.trim();
+            if (!input) return;
             
             try {
-                if (queue.isEmpty()) {
-                    alert("Queue is empty! Cannot dequeue.");
-                    return;
-                }
-                
-                statusDetailDisplay.textContent = "Dequeuing...";
-                
-                const currentHead = queue.head;
-                const box = document.getElementById(`box-${currentHead}`);
-                const value = queue.queue[currentHead];
-                
-                box.classList.add('animate-dequeue');
-                
-                await new Promise(resolve => setTimeout(resolve, animationSpeed));
-                
-                queue.dequeue();
-                box.classList.remove('animate-dequeue');
-                updateVisualization();
-                
-                statusDetailDisplay.textContent = `Successfully dequeued ${value} from position ${currentHead}!`;
-                
-            } catch (error) {
-                statusDetailDisplay.textContent = error.message;
-            } finally {
-                isAnimating = false;
+                const values = parseInput(input);
+                animateEnqueue(values);
+                elements.input.value = '';
+            } catch (e) {
+                alert(e.message);
             }
-        }
-
-        function clearQueue() {
-            if (queue.isEmpty()) {
-                alert("Queue is already empty");
-                return;
+        };
+        
+        elements.dequeue.onclick = animateDequeue;
+        
+        elements.clear.onclick = () => {
+            queue.clear();
+            update();
+        };
+        
+        elements.speedSlider.oninput = (e) => {
+            speed = 1100 - (e.target.value * 100);
+        };
+        
+        elements.random3.onclick = () => randomFill(3, 5);
+        elements.random6.onclick = () => randomFill(6, 8);
+        elements.random9.onclick = () => randomFill(9, 12);
+        
+        elements.input.onkeypress = (e) => {
+            if (e.key === 'Enter') elements.enqueue.click();
+        };
+        
+        // Modal functionality
+        elements.complexityBtn.onclick = () => {
+            elements.complexityModal.style.display = 'flex';
+        };
+        
+        elements.closeModal.onclick = () => {
+            elements.complexityModal.style.display = 'none';
+        };
+        
+        elements.complexityModal.onclick = (e) => {
+            if (e.target === elements.complexityModal) {
+                elements.complexityModal.style.display = 'none';
             }
-            
-            if (confirm("Are you sure you want to clear the queue?")) {
-                queue.clear();
-                updateVisualization();
-                statusDetailDisplay.textContent = "Queue cleared successfully!";
-            }
-        }
-
-        // Event listeners
-        enqueueBtn.addEventListener('click', function() {
-            const value = queueInput.value.trim();
-            if (value === "") {
-                alert("Please enter a value to enqueue");
-                return;
-            }
-            if (isNaN(value)) {
-                alert("Please enter a valid number");
-                return;
-            }
-            animateEnqueue(parseInt(value));
-            queueInput.value = "";
-        });
-
-        dequeueBtn.addEventListener('click', animateDequeue);
-        clearBtn.addEventListener('click', clearQueue);
-
-        queueInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const value = queueInput.value.trim();
-                if (value !== "" && !isNaN(value)) {
-                    animateEnqueue(parseInt(value));
-                    queueInput.value = "";
-                }
+        };
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                elements.complexityModal.style.display = 'none';
             }
         });
-
-        speedSlider.addEventListener('input', function() {
-            animationSpeed = 1000 - (this.value * 90);
-        });
-
-        maximizeBtn.addEventListener('click', function() {
-            document.body.classList.toggle('maximized');
-            this.textContent = document.body.classList.contains('maximized') ? 
-                '🔍 Minimize' : '🔍 Maximize';
-        });
-
-        // Initialize the visualization
-        initializeVisualization();
+        
+        init();
     </script>
 </body>
 </html>

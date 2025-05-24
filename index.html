@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sorting Visualizer</title>
+    <title>Algorithm Visualizer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
@@ -16,6 +16,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Navigation Header */
@@ -27,6 +28,7 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
         }
 
         .logo {
@@ -48,6 +50,7 @@
             padding: 8px 16px;
             border-radius: 8px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .nav-menu li a:hover {
@@ -63,64 +66,125 @@
             cursor: pointer;
         }
 
+        /* Introduction Page */
+        .intro-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .intro-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 177, 153, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .intro-title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b9d, #c44569, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(79, 172, 254, 0.8)); }
+        }
+
+        .intro-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .intro-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+
+        .enter-btn {
+            background: linear-gradient(45deg, #fa709a, #fee140);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(250, 112, 154, 0.4);
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(250, 112, 154, 0.6);
+        }
+
+        /* Main Visualizer Page */
+        .main-page {
+            display: none;
+            padding: 20px;
+        }
+
         .header {
             text-align: center;
-            padding: 20px 0;
             margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: 3em;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
             background: linear-gradient(45deg, #ff6b9d, #c44569);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 10px;
         }
 
-        .header h2 {
-            font-size: 1.2em;
-            opacity: 0.8;
-        }
-
-        .controls-section {
+        .controls {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
             flex-wrap: wrap;
-            padding: 0 20px;
-        }
-
-        .control-group {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 15px 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .control-group h3 {
-            margin-bottom: 10px;
-            font-size: 1em;
-            text-align: center;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
 
         button {
-            padding: 10px 16px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9em;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: all 0.3s ease;
             color: white;
@@ -130,231 +194,99 @@
             background: linear-gradient(45deg, #4facfe, #00f2fe);
         }
 
-        .data-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
-        }
-
         .control-btn {
             background: linear-gradient(45deg, #43e97b, #38f9d7);
         }
 
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
-        }
-
         .play-all-btn {
             background: linear-gradient(45deg, #fa709a, #fee140);
-            font-size: 1.1em;
+            font-size: 1.1rem;
             padding: 12px 24px;
         }
 
-        .play-all-btn:hover {
+        button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .sorting-grid {
+        .algorithms-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin: 0 auto 40px;
-            max-width: 1400px;
-            padding: 0 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
-        .algorithm {
+
+        .algorithm-card {
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
+            border-radius: 15px;
+            padding: 20px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
-        .algorithm:hover {
+        .algorithm-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-        
-        .algorithm-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .algorithm h3 {
-            font-size: 1.4em;
-            margin-right: 10px;
-        }
-        
-        .info-button {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .info-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .algorithm-title {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
         }
-        
+
         .bars-container {
-            height: 200px;
+            height: 150px;
             display: flex;
             align-items: flex-end;
-            margin: 20px 0;
             justify-content: center;
-            width: 100%;
             background: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 15px;
         }
-        
+
         .bar {
             flex: 1;
-            width: 4%;
             background: linear-gradient(to top, #4facfe, #00f2fe);
             margin: 0 1px;
-            transition: all 0.3s ease;
-            border-radius: 3px 3px 0 0;
+            border-radius: 2px 2px 0 0;
             min-height: 5px;
+            transition: all 0.3s ease;
         }
 
         .bar.comparing {
             background: linear-gradient(to top, #ff6b9d, #c44569) !important;
-            animation: pulse 0.5s ease-in-out;
+            transform: scale(1.1);
         }
 
         .bar.swapping {
             background: linear-gradient(to top, #fa709a, #fee140) !important;
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
 
         .bar.sorted {
             background: linear-gradient(to top, #43e97b, #38f9d7) !important;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
         .play-btn {
+            width: 100%;
             background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px 20px;
-            font-size: 1em;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .play-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            margin-top: 10px;
         }
 
         .play-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
-        }
-
-        .creators-section {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin: 40px auto;
-            max-width: 800px;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-        }
-
-        .creators-section h3 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #ff6b9d, #c44569);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .creators-list {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .creator {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .creator:hover {
-            transform: translateY(-3px);
-        }
-
-        .creator-name {
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        
-        #info-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            z-index: 1000;
-            max-width: 500px;
-            color: #333;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-        
-        #modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 999;
-        }
-        
-        #close-modal {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
+            .intro-title {
+                font-size: 2.5rem;
+            }
+            
             .nav-menu {
                 display: none;
                 position: absolute;
@@ -374,22 +306,12 @@
             .menu-toggle {
                 display: block;
             }
-
-            .sorting-grid {
+            
+            .algorithms-grid {
                 grid-template-columns: 1fr;
             }
             
-            .controls-section {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .control-group {
-                width: 100%;
-                max-width: 400px;
-            }
-
-            .creators-list {
+            .controls {
                 flex-direction: column;
                 align-items: center;
             }
@@ -397,402 +319,336 @@
     </style>
 </head>
 <body>
-    <!-- Navigation Header -->
-    <nav class="nav-header">
-        <a href="#" class="logo">Sorting Visualizer</a>
-        <ul class="nav-menu" id="nav-menu">
-            <li><a href=>Home</a></li>
-            <li><a href="Sorting\sorting.html">Sorting Visualizer</a></li>
-            <li><a href="Sorting\compare\index.html">Algorithm Comparison</a></li>
-            <li><a href="Sorting\queue.html">Queues Visualization</a></li>
-            <li><a href="Sorting\stack.html">Stack Visualization</a></li>
-        </ul>
-        <button class="menu-toggle" id="menu-toggle">☰</button>
-    </nav>
-
-    <div class="header">
-        <h1>SORTING VISUALIZER</h1>
-        <h2>Visualized Time Complexities</h2>
-    </div>
-
-    <div class="controls-section">
-        <div class="control-group">
-            <h3>🔢 Array Types</h3>
-            <div class="button-group">
-                <button class="data-btn" id="random">Random</button>
-                <button class="data-btn" id="nearly-sorted">Nearly Sorted</button>
-                <button class="data-btn" id="reversed">Reversed</button>
-                <button class="data-btn" id="few-unique">Few Unique</button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <h3>🎮 Actions</h3>
-            <div class="button-group">
-                <button class="control-btn" id="pause-btn">⏸️ Pause</button>
-                <button class="control-btn" id="reset-btn">🔄 Reset</button>
-                <button class="play-all-btn" id="play-all">🚀 Play All</button>
-            </div>
+    <!-- Introduction Page -->
+    <div class="intro-page" id="intro-page">
+        <div class="intro-content">
+            <h1 class="intro-title">Algorithm Visualizer</h1>
+            <h2 class="intro-subtitle">See Algorithms Come to Life</h2>
+            <p class="intro-description">
+                Welcome to the world of algorithm visualization! Understanding how sorting algorithms work can be challenging when you're just reading code or theory. This interactive visualizer transforms abstract concepts into beautiful, animated experiences.
+                <br><br>
+                Watch as different sorting algorithms race to organize data, each with their unique approach and efficiency. From the simple bubble sort to the elegant merge sort, discover how computer science concepts work in real-time.
+                <br><br>
+                Ready to explore the fascinating world of algorithms?
+            </p>
+            <button class="enter-btn" onclick="enterVisualizer()">
+                🚀 Start Visualizing
+            </button>
         </div>
     </div>
 
-    <div class="sorting-grid">
-        <div class="algorithm">
-            <div class="algorithm-header">
-                <h3>Insertion Sort</h3>
-                <button class="info-button" data-algo="insertion">i</button>
-            </div>
-            <div class="bars-container" id="insertion-bars"></div>
-            <button class="play-btn" data-algo="insertion">▶️ Play</button>
-        </div>
-        
-        <div class="algorithm">
-            <div class="algorithm-header">
-                <h3>Selection Sort</h3>
-                <button class="info-button" data-algo="selection">i</button>
-            </div>
-            <div class="bars-container" id="selection-bars"></div>
-            <button class="play-btn" data-algo="selection">▶️ Play</button>
-        </div>
-        
-        <div class="algorithm">
-            <div class="algorithm-header">
-                <h3>Bubble Sort</h3>
-                <button class="info-button" data-algo="bubble">i</button>
-            </div>
-            <div class="bars-container" id="bubble-bars"></div>
-            <button class="play-btn" data-algo="bubble">▶️ Play</button>
-        </div>
-        
-        <div class="algorithm">
-            <div class="algorithm-header">
-                <h3>Merge Sort</h3>
-                <button class="info-button" data-algo="merge">i</button>
-            </div>
-            <div class="bars-container" id="merge-bars"></div>
-            <button class="play-btn" data-algo="merge">▶️ Play</button>
-        </div>
-        
-        <div class="algorithm">
-            <div class="algorithm-header">
-                <h3>Quick Sort</h3>
-                <button class="info-button" data-algo="quick">i</button>
-            </div>
-            <div class="bars-container" id="quick-bars"></div>
-            <button class="play-btn" data-algo="quick">▶️ Play</button>
+    <!-- Main Visualizer Page -->
+    <div class="main-page" id="main-page">
+        <!-- Navigation Header -->
+        <nav class="nav-header">
+            <a href="#" class="logo">Sorting Visualizer</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#" onclick="showIntro()">Home</a></li>
+                <li><a href="Sorting/sorting.html">Sorting Visualizer</a></li>
+                <li><a href="Sorting\compare\index.html">Algorithm Comparison</a></li>
+                <li><a href="Sorting\queue.html">Queues Visualization</a></li>
+                <li><a href="Sorting\stack.html">Stack Visualization</a></li>
+            </ul>
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+        </nav>
+
+        <div class="header">
+            <h1>Sorting Algorithm Visualizer</h1>
+            <p>Compare different sorting algorithms in action</p>
         </div>
 
-        <div class="algorithm">
-            <div class="algorithm-header">
-                <h3>Heap Sort</h3>
-                <button class="info-button" data-algo="heap">i</button>
+        <div class="controls">
+            <button class="data-btn" onclick="generateArray('random')">🎲 Random</button>
+            <button class="data-btn" onclick="generateArray('reversed')">⬇️ Reversed</button>
+            <button class="data-btn" onclick="generateArray('nearly')">📊 Nearly Sorted</button>
+            <button class="data-btn" onclick="generateArray('few-unique')">🔢 Few Unique</button>
+            <button class="control-btn" id="pause-btn" onclick="togglePause()">⏸️ Pause</button>
+            <button class="control-btn" onclick="resetAll()">🔄 Reset</button>
+            <button class="play-all-btn" onclick="playAll()">▶️ Play All</button>
+        </div>
+
+        <div class="algorithms-grid">
+            <div class="algorithm-card">
+                <h3 class="algorithm-title">Bubble Sort</h3>
+                <div class="bars-container" id="bubble-bars"></div>
+                <button class="play-btn" onclick="startSort('bubble')">Play Bubble Sort</button>
             </div>
-            <div class="bars-container" id="heap-bars"></div>
-            <button class="play-btn" data-algo="heap">▶️ Play</button>
+
+            <div class="algorithm-card">
+                <h3 class="algorithm-title">Selection Sort</h3>
+                <div class="bars-container" id="selection-bars"></div>
+                <button class="play-btn" onclick="startSort('selection')">Play Selection Sort</button>
+            </div>
+
+            <div class="algorithm-card">
+                <h3 class="algorithm-title">Insertion Sort</h3>
+                <div class="bars-container" id="insertion-bars"></div>
+                <button class="play-btn" onclick="startSort('insertion')">Play Insertion Sort</button>
+            </div>
+
+            <div class="algorithm-card">
+                <h3 class="algorithm-title">Merge Sort</h3>
+                <div class="bars-container" id="merge-bars"></div>
+                <button class="play-btn" onclick="startSort('merge')">Play Merge Sort</button>
+            </div>
+
+            <div class="algorithm-card">
+                <h3 class="algorithm-title">Quick Sort</h3>
+                <div class="bars-container" id="quick-bars"></div>
+                <button class="play-btn" onclick="startSort('quick')">Play Quick Sort</button>
+            </div>
+
+            <div class="algorithm-card">
+                <h3 class="algorithm-title">Heap Sort</h3>
+                <div class="bars-container" id="heap-bars"></div>
+                <button class="play-btn" onclick="startSort('heap')">Play Heap Sort</button>
+            </div>
         </div>
     </div>
 
-    <div class="creators-section">
-        <h3>👨‍💻 Meet the Creators</h3>
-        <div class="creators-list">
-            <div class="creator">
-                <div class="creator-name">Luigi S. Dapo</div>
-            </div>
-            <div class="creator">
-                <div class="creator-name">Justin Yutrago</div>
-            </div>
-            <div class="creator">
-                <div class="creator-name">John Kennedy Zapata</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Info Modal -->
-    <div id="info-modal">
-        <h3 id="modal-title"></h3>
-        <p id="modal-content"></p>
-        <button id="close-modal">Close</button>
-    </div>
-    <div id="modal-overlay"></div>
-    
     <script>
-        // Global variables
-        let arraySize = 20;
-        let speed = 50;
+        const arraySize = 20;
+        const speed = 100;
+        let arrays = {};
+        let bars = {};
         let isRunning = false;
         let isPaused = false;
-        
-        let bars = {
-            insertion: [],
-            selection: [],
-            bubble: [],
-            merge: [],
-            quick: [],
-            heap: []
-        };
-        
-        let arrays = {
-            insertion: [],
-            selection: [],
-            bubble: [],
-            merge: [],
-            quick: [],
-            heap: []
-        };
 
-        // Initialize the visualizer
-        function initialize() {
-            generateRandomArray();
+        const algorithms = ['bubble', 'selection', 'insertion', 'merge', 'quick', 'heap'];
+
+        function enterVisualizer() {
+            document.getElementById('intro-page').style.display = 'none';
+            document.getElementById('main-page').style.display = 'block';
+            initialize();
             setupEventListeners();
         }
 
-        // Generate random array
-        function generateRandomArray() {
-            const newArray = [];
-            for (let i = 0; i < arraySize; i++) {
-                newArray.push(Math.floor(Math.random() * 180) + 10);
-            }
-            
-            for (const algo in arrays) {
-                arrays[algo] = [...newArray];
-                renderBars(algo);
-            }
+        function showIntro() {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('intro-page').style.display = 'flex';
         }
 
-        // Generate nearly sorted array
-        function generateNearlySortedArray() {
-            const newArray = [];
-            for (let i = 0; i < arraySize; i++) {
-                newArray.push(i * 8 + 10);
-            }
-            
-            for (let i = 0; i < arraySize/4; i++) {
-                const idx1 = Math.floor(Math.random() * arraySize);
-                const idx2 = Math.floor(Math.random() * arraySize);
-                [newArray[idx1], newArray[idx2]] = [newArray[idx2], newArray[idx1]];
-            }
-            
-            for (const algo in arrays) {
-                arrays[algo] = [...newArray];
-                renderBars(algo);
-            }
+        function setupEventListeners() {
+            // Menu toggle
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                const navMenu = document.getElementById('nav-menu');
+                navMenu.classList.toggle('active');
+            });
         }
 
-        // Generate reversed array
-        function generateReversedArray() {
-            const newArray = [];
-            for (let i = 0; i < arraySize; i++) {
-                newArray.push(180 - (i * 8));
-            }
-            
-            for (const algo in arrays) {
-                arrays[algo] = [...newArray];
-                renderBars(algo);
-            }
+        function initialize() {
+            algorithms.forEach(algo => {
+                arrays[algo] = [];
+                bars[algo] = [];
+            });
+            generateArray('random');
         }
 
-        // Generate array with few unique values
-        function generateFewUniqueArray() {
-            const uniqueValues = [20, 50, 80, 110, 140, 170];
-            const newArray = [];
-            for (let i = 0; i < arraySize; i++) {
-                newArray.push(uniqueValues[Math.floor(Math.random() * uniqueValues.length)]);
-            }
+        function generateArray(type) {
+            let newArray = [];
             
-            for (const algo in arrays) {
+            switch(type) {
+                case 'random':
+                    for (let i = 0; i < arraySize; i++) {
+                        newArray.push(Math.floor(Math.random() * 120) + 10);
+                    }
+                    break;
+                case 'reversed':
+                    for (let i = 0; i < arraySize; i++) {
+                        newArray.push(130 - (i * 5));
+                    }
+                    break;
+                case 'nearly':
+                    for (let i = 0; i < arraySize; i++) {
+                        newArray.push(i * 6 + 10);
+                    }
+                    // Shuffle a few elements
+                    for (let i = 0; i < 3; i++) {
+                        const idx1 = Math.floor(Math.random() * arraySize);
+                        const idx2 = Math.floor(Math.random() * arraySize);
+                        [newArray[idx1], newArray[idx2]] = [newArray[idx2], newArray[idx1]];
+                    }
+                    break;
+                case 'few-unique':
+                    const uniqueValues = [20, 50, 80, 110];
+                    for (let i = 0; i < arraySize; i++) {
+                        newArray.push(uniqueValues[Math.floor(Math.random() * uniqueValues.length)]);
+                    }
+                    break;
+            }
+
+            algorithms.forEach(algo => {
                 arrays[algo] = [...newArray];
                 renderBars(algo);
-            }
+            });
         }
 
-        // Render bars for an algorithm
         function renderBars(algo) {
             const container = document.getElementById(`${algo}-bars`);
             container.innerHTML = '';
-            
             bars[algo] = [];
-            for (let i = 0; i < arrays[algo].length; i++) {
+
+            arrays[algo].forEach((value, index) => {
                 const bar = document.createElement('div');
                 bar.className = 'bar';
-                bar.style.height = `${(arrays[algo][i] / 200) * 100}%`;
+                bar.style.height = `${(value / 140) * 100}%`;
                 container.appendChild(bar);
                 bars[algo].push(bar);
+            });
+        }
+
+        function resetAll() {
+            algorithms.forEach(algo => {
+                bars[algo].forEach(bar => {
+                    bar.classList.remove('comparing', 'swapping', 'sorted');
+                });
+            });
+            generateArray('random');
+            isRunning = false;
+            isPaused = false;
+            document.getElementById('pause-btn').textContent = '⏸️ Pause';
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pause-btn').textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        async function playAll() {
+            if (isRunning) return;
+            
+            const promises = algorithms.map(algo => startSort(algo, false));
+            await Promise.all(promises);
+        }
+
+        async function startSort(algo, standalone = true) {
+            if (isRunning && standalone) return;
+            
+            if (standalone) isRunning = true;
+
+            switch(algo) {
+                case 'bubble': await bubbleSort(algo); break;
+                case 'selection': await selectionSort(algo); break;
+                case 'insertion': await insertionSort(algo); break;
+                case 'merge': await mergeSort(algo); break;
+                case 'quick': await quickSort(algo); break;
+                case 'heap': await heapSort(algo); break;
             }
+
+            bars[algo].forEach(bar => bar.classList.add('sorted'));
+            
+            if (standalone) isRunning = false;
         }
 
-        // Highlight bars during sorting
-        function highlightBars(algo, indexes, className = 'comparing') {
-            indexes.forEach(i => {
-                if (bars[algo][i]) {
-                    bars[algo][i].classList.add(className);
-                }
-            });
-        }
-
-        // Reset bar colors
-        function resetBarColors(algo) {
-            bars[algo].forEach(bar => {
-                bar.classList.remove('comparing', 'swapping', 'sorted');
-            });
-        }
-
-        // Mark algorithm as sorted
-        function markAsSorted(algo) {
-            bars[algo].forEach(bar => {
-                bar.classList.add('sorted');
-            });
-        }
-
-        // Swap two elements with animation
         async function swap(algo, i, j) {
             if (isPaused) return;
             
             [arrays[algo][i], arrays[algo][j]] = [arrays[algo][j], arrays[algo][i]];
             
-            // Highlight swapping bars
             bars[algo][i].classList.add('swapping');
             bars[algo][j].classList.add('swapping');
             
-            // Update heights
-            bars[algo][i].style.height = `${(arrays[algo][i] / 200) * 100}%`;
-            bars[algo][j].style.height = `${(arrays[algo][j] / 200) * 100}%`;
+            bars[algo][i].style.height = `${(arrays[algo][i] / 140) * 100}%`;
+            bars[algo][j].style.height = `${(arrays[algo][j] / 140) * 100}%`;
             
             await new Promise(resolve => setTimeout(resolve, speed));
             
-            // Reset colors
             bars[algo][i].classList.remove('swapping');
             bars[algo][j].classList.remove('swapping');
         }
 
-        // Compare two elements
         async function compare(algo, i, j) {
             if (isPaused) return;
             
-            highlightBars(algo, [i, j], 'comparing');
+            bars[algo][i].classList.add('comparing');
+            bars[algo][j].classList.add('comparing');
             
             await new Promise(resolve => setTimeout(resolve, speed / 2));
             
             bars[algo][i].classList.remove('comparing');
             bars[algo][j].classList.remove('comparing');
-            
-            return arrays[algo][i] > arrays[algo][j];
         }
 
-        // Sorting Algorithms
+        async function bubbleSort(algo) {
+            const arr = arrays[algo];
+            for (let i = 0; i < arr.length - 1; i++) {
+                for (let j = 0; j < arr.length - i - 1; j++) {
+                    await compare(algo, j, j + 1);
+                    if (arr[j] > arr[j + 1]) {
+                        await swap(algo, j, j + 1);
+                    }
+                }
+            }
+        }
+
+        async function selectionSort(algo) {
+            const arr = arrays[algo];
+            for (let i = 0; i < arr.length - 1; i++) {
+                let minIdx = i;
+                for (let j = i + 1; j < arr.length; j++) {
+                    await compare(algo, j, minIdx);
+                    if (arr[j] < arr[minIdx]) {
+                        minIdx = j;
+                    }
+                }
+                if (minIdx !== i) {
+                    await swap(algo, i, minIdx);
+                }
+            }
+        }
+
         async function insertionSort(algo) {
             const arr = arrays[algo];
             for (let i = 1; i < arr.length; i++) {
-                if (isPaused) return;
                 let j = i;
                 while (j > 0) {
                     await compare(algo, j, j - 1);
                     if (arr[j] < arr[j - 1]) {
                         await swap(algo, j, j - 1);
                         j--;
-                    } else {
-                        break;
-                    }
+                    } else break;
                 }
             }
-            markAsSorted(algo);
-        }
-
-        async function selectionSort(algo) {
-            const arr = arrays[algo];
-            for (let i = 0; i < arr.length - 1; i++) {
-                if (isPaused) return;
-                let minIndex = i;
-                
-                for (let j = i + 1; j < arr.length; j++) {
-                    if (isPaused) return;
-                    await compare(algo, j, minIndex);
-                    if (arr[j] < arr[minIndex]) {
-                        minIndex = j;
-                    }
-                }
-                
-                if (minIndex !== i) {
-                    await swap(algo, i, minIndex);
-                }
-            }
-            markAsSorted(algo);
-        }
-
-        async function bubbleSort(algo) {
-            const arr = arrays[algo];
-            let swapped;
-            for (let i = 0; i < arr.length - 1; i++) {
-                if (isPaused) return;
-                swapped = false;
-                for (let j = 0; j < arr.length - i - 1; j++) {
-                    if (isPaused) return;
-                    await compare(algo, j, j + 1);
-                    if (arr[j] > arr[j + 1]) {
-                        await swap(algo, j, j + 1);
-                        swapped = true;
-                    }
-                }
-                if (!swapped) break;
-            }
-            markAsSorted(algo);
         }
 
         async function mergeSort(algo) {
             async function merge(l, m, r) {
-                if (isPaused) return;
                 const n1 = m - l + 1;
                 const n2 = r - m;
-                const L = new Array(n1);
-                const R = new Array(n2);
-
-                for (let i = 0; i < n1; i++) L[i] = arrays[algo][l + i];
-                for (let j = 0; j < n2; j++) R[j] = arrays[algo][m + 1 + j];
+                const L = arrays[algo].slice(l, m + 1);
+                const R = arrays[algo].slice(m + 1, r + 1);
 
                 let i = 0, j = 0, k = l;
 
                 while (i < n1 && j < n2) {
-                    if (isPaused) return;
-                    highlightBars(algo, [k], 'swapping');
+                    bars[algo][k].classList.add('comparing');
                     
                     if (L[i] <= R[j]) {
-                        arrays[algo][k] = L[i];
-                        bars[algo][k].style.height = `${(arrays[algo][k] / 200) * 100}%`;
-                        i++;
+                        arrays[algo][k] = L[i++];
                     } else {
-                        arrays[algo][k] = R[j];
-                        bars[algo][k].style.height = `${(arrays[algo][k] / 200) * 100}%`;
-                        j++;
+                        arrays[algo][k] = R[j++];
                     }
-                    k++;
+                    
+                    bars[algo][k].style.height = `${(arrays[algo][k] / 140) * 100}%`;
                     await new Promise(resolve => setTimeout(resolve, speed));
-                    bars[algo][k-1].classList.remove('swapping');
+                    bars[algo][k].classList.remove('comparing');
+                    k++;
                 }
 
                 while (i < n1) {
-                    if (isPaused) return;
-                    arrays[algo][k] = L[i];
-                    bars[algo][k].style.height = `${(arrays[algo][k] / 200) * 100}%`;
-                    highlightBars(algo, [k], 'swapping');
-                    await new Promise(resolve => setTimeout(resolve, speed));
-                    bars[algo][k].classList.remove('swapping');
-                    i++;
+                    arrays[algo][k] = L[i++];
+                    bars[algo][k].style.height = `${(arrays[algo][k] / 140) * 100}%`;
                     k++;
                 }
 
                 while (j < n2) {
-                    if (isPaused) return;
-                    arrays[algo][k] = R[j];
-                    bars[algo][k].style.height = `${(arrays[algo][k] / 200) * 100}%`;
-                    highlightBars(algo, [k], 'swapping');
-                    await new Promise(resolve => setTimeout(resolve, speed));
-                    bars[algo][k].classList.remove('swapping');
-                    j++;
+                    arrays[algo][k] = R[j++];
+                    bars[algo][k].style.height = `${(arrays[algo][k] / 140) * 100}%`;
                     k++;
                 }
             }
 
             async function sort(l, r) {
-                if (isPaused) return;
                 if (l >= r) return;
                 const m = l + Math.floor((r - l) / 2);
                 await sort(l, m);
@@ -801,45 +657,37 @@
             }
 
             await sort(0, arrays[algo].length - 1);
-            markAsSorted(algo);
         }
 
         async function quickSort(algo) {
             async function partition(low, high) {
-                if (isPaused) return -1;
                 const pivot = arrays[algo][high];
                 let i = low - 1;
 
                 for (let j = low; j < high; j++) {
-                    if (isPaused) return -1;
                     await compare(algo, j, high);
                     if (arrays[algo][j] < pivot) {
                         i++;
                         await swap(algo, i, j);
                     }
                 }
-
                 await swap(algo, i + 1, high);
                 return i + 1;
             }
 
             async function sort(low, high) {
-                if (isPaused) return;
                 if (low < high) {
                     const pi = await partition(low, high);
-                    if (pi === -1) return;
                     await sort(low, pi - 1);
                     await sort(pi + 1, high);
                 }
             }
 
             await sort(0, arrays[algo].length - 1);
-            markAsSorted(algo);
         }
 
         async function heapSort(algo) {
             async function heapify(n, i) {
-                if (isPaused) return;
                 let largest = i;
                 let left = 2 * i + 1;
                 let right = 2 * i + 2;
@@ -864,163 +712,19 @@
                 }
             }
 
-            const arr = arrays[algo];
-            const n = arr.length;
+            const n = arrays[algo].length;
 
             // Build max heap
             for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-                if (isPaused) return;
                 await heapify(n, i);
             }
 
-            // Extract elements from heap one by one
+            // Extract elements from heap
             for (let i = n - 1; i > 0; i--) {
-                if (isPaused) return;
                 await swap(algo, 0, i);
                 await heapify(i, 0);
             }
-
-            markAsSorted(algo);
         }
-
-        // Event listeners
-        function setupEventListeners() {
-            // Menu toggle
-            document.getElementById('menu-toggle').addEventListener('click', function() {
-                const navMenu = document.getElementById('nav-menu');
-                navMenu.classList.toggle('active');
-            });
-
-            // Play buttons for each algorithm
-            document.querySelectorAll('.play-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const algo = this.getAttribute('data-algo');
-                    this.disabled = true;
-                    isRunning = true;
-                    
-                    switch(algo) {
-                        case 'insertion':
-                            await insertionSort(algo);
-                            break;
-                        case 'selection':
-                            await selectionSort(algo);
-                            break;
-                        case 'bubble':
-                            await bubbleSort(algo);
-                            break;
-                        case 'merge':
-                            await mergeSort(algo);
-                            break;
-                        case 'quick':
-                            await quickSort(algo);
-                            break;
-                        case 'heap':
-                            await heapSort(algo);
-                            break;
-                    }
-                    
-                    this.disabled = false;
-                    isRunning = false;
-                });
-            });
-            
-            // Data generation buttons
-            document.getElementById('random').addEventListener('click', generateRandomArray);
-            document.getElementById('nearly-sorted').addEventListener('click', generateNearlySortedArray);
-            document.getElementById('reversed').addEventListener('click', generateReversedArray);
-            document.getElementById('few-unique').addEventListener('click', generateFewUniqueArray);
-            
-            // Control buttons
-            document.getElementById('pause-btn').addEventListener('click', function() {
-                isPaused = !isPaused;
-                this.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
-            });
-
-            document.getElementById('reset-btn').addEventListener('click', function() {
-                isPaused = false;
-                isRunning = false;
-                document.getElementById('pause-btn').textContent = '⏸️ Pause';
-                generateRandomArray();
-                
-                // Enable all play buttons
-                document.querySelectorAll('.play-btn').forEach(btn => {
-                    btn.disabled = false;
-                });
-            });
-            
-            // Play all button
-            document.getElementById('play-all').addEventListener('click', async function() {
-                this.disabled = true;
-                const playButtons = document.querySelectorAll('.play-btn');
-                
-                for (const button of playButtons) {
-                    if (!isPaused) {
-                        button.click();
-                        await new Promise(resolve => setTimeout(resolve, 200));
-                    }
-                }
-                
-                this.disabled = false;
-            });
-
-            // Info modal functionality
-            const infoButtons = document.querySelectorAll('.info-button');
-            const modal = document.getElementById('info-modal');
-            const overlay = document.getElementById('modal-overlay');
-            const modalTitle = document.getElementById('modal-title');
-            const modalContent = document.getElementById('modal-content');
-            const closeModal = document.getElementById('close-modal');
-
-            const algorithmInfo = {
-                insertion: {
-                    title: "Insertion Sort",
-                    content: `Insertion sort builds the final sorted array one item at a time. It is much less efficient on large lists than more advanced algorithms.<br><br><b>Uses:</b> Useful for small data sets or nearly sorted data.<br><b>Time Complexity:</b> O(n²) in the worst case, O(n) in the best case.`
-                },
-                selection: {
-                    title: "Selection Sort",
-                    content: `Selection sort divides the input list into two parts: a sorted sublist and an unsorted sublist. It repeatedly finds the minimum element from the unsorted part and moves it to the sorted part.<br><br><b>Uses:</b> Useful when memory writes are expensive, as it makes only O(n) writes.<br><b>Time Complexity:</b> O(n²) in all cases.`
-                },
-                bubble: {
-                    title: "Bubble Sort",
-                    content: `Bubble sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted.<br><br><b>Uses:</b> Mainly educational, not practical for large data.<br><b>Time Complexity:</b> O(n²) in worst and average case, O(n) in best case.`
-                },
-                merge: {
-                    title: "Merge Sort",
-                    content: `Merge sort is a divide-and-conquer algorithm that divides the input array into two halves, sorts them recursively, and then merges the two sorted halves.<br><br><b>Uses:</b> Suitable for large data; stable and predictable performance.<br><b>Time Complexity:</b> O(n log n) in all cases.`
-                },
-                quick: {
-                    title: "Quick Sort",
-                    content: `Quick sort is a divide-and-conquer algorithm that selects a 'pivot' element and partitions the array around the pivot, placing smaller elements before it and larger elements after it.<br><br><b>Uses:</b> Fastest in practice for large random data.<br><b>Time Complexity:</b> O(n log n) average case, O(n²) worst case.`
-                },
-                heap: {
-                    title: "Heap Sort",
-                    content: `Heap sort is a comparison-based sorting technique based on Binary Heap data structure. It first builds a max heap, then repeatedly extracts the maximum element and places it at the end.<br><br><b>Uses:</b> Useful when auxiliary space is a concern. Not stable but in-place.<br><b>Time Complexity:</b> O(n log n) in all cases.`
-                }
-            };
-
-            infoButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const algo = this.getAttribute('data-algo');
-                    modalTitle.textContent = algorithmInfo[algo].title;
-                    modalContent.innerHTML = algorithmInfo[algo].content;
-                    modal.style.display = 'block';
-                    overlay.style.display = 'block';
-                });
-            });
-
-            closeModal.addEventListener('click', function() {
-                modal.style.display = 'none';
-                overlay.style.display = 'none';
-            });
-
-            overlay.addEventListener('click', function() {
-                modal.style.display = 'none';
-                overlay.style.display = 'none';
-            });
-        }
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
